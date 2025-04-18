@@ -3,7 +3,7 @@
 import GoalCard, { Goal } from "@/components/ui/goalcard";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { ChevronRight, PlusCircle, PlusIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import NewGoal from "@/components/newGoal";
 
 export default function MainPage() {
