@@ -20,16 +20,20 @@ export default function Sidebar() {
         <div className="font-bold px-3">Habit</div>
         <div className=" mt-2 text-xl ">
           <div className="flex justify-between h-15 items-center hover:bg-gray-100 cursor-pointer w-full duration-200">
-            <p className="px-5">Streak</p>
+            <p className="px-5">All</p>
+            <p className="px-5">4</p>
+          </div>
+          <div className="flex justify-between h-15 items-center hover:bg-gray-100 cursor-pointer w-full duration-200">
+            <p className="px-5">Daily Routine</p>
             <p className="px-5">0</p>
           </div>
           <div className="flex justify-between h-15 items-center hover:bg-gray-100 cursor-pointer w-full duration-200">
-            <p className="px-5">All</p>
+            <p className="px-5">Study Routine</p>
             <p className="px-5">4</p>
           </div>
         </div>
       </div>
-      <div className="w-full">
+      {/* <div className="w-full">
         <div className="font-bold px-3">Lists</div>
         <div className="mt-2 text-xl ">
           <div className="flex justify-between h-15 items-center hover:bg-gray-100 cursor-pointer w-full duration-200">
@@ -41,7 +45,7 @@ export default function Sidebar() {
             <p className="px-5">4</p>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
