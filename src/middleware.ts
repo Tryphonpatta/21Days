@@ -1,27 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
 
-const PUBLIC_PATHS = ["/login", "/signup"];
+const PUBLIC_PATHS = ["/login", "/register"];
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Allow public paths
   if (PUBLIC_PATHS.includes(pathname)) {
     return NextResponse.next();
   }
-
   const token = request.cookies.get("access_token")?.value;
-
+  console.log("Token:", token);
   if (!token) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-
-  try {
-    jwt.verify(token, process.env.JWT_SECRET!);
-    return NextResponse.next();
-  } catch (error) {
-    console.log(error);
     return NextResponse.redirect(new URL("/login", request.url));
   }
 }

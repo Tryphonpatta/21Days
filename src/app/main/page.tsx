@@ -2,35 +2,42 @@
 
 import GoalCard, { Goal } from "@/components/ui/goalcard";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PlusIcon } from "lucide-react";
 import NewGoal from "@/components/newGoal";
+import axios from "axios";
+import { deleteToken, getToken } from "../../../utils/getAccesstoken";
+import { toast } from "react-toastify";
 
 export default function MainPage() {
   const [isNew, setIsNew] = useState(false);
-  const [goals, setGoals] = useState<Goal[]>([
-    {
-      id: "1",
-      name: "🏋️Exercise",
-      streak: 3,
-      color: "#FFEE93",
-      note: "",
-    },
-    {
-      id: "2",
-      name: "📚Study",
-      streak: 5,
-      color: "#0038FF",
-      note: "",
-    },
-    {
-      id: "3",
-      name: "🍽️Eat Healthy",
-      streak: 0,
-      color: "#FF5C93",
-      note: "",
-    },
-  ]);
+  const [goals, setGoals] = useState<Goal[]>([]);
+  const [goalRes, setGoalRes] = useState([]);
+  useEffect(() => {
+    fetchGoals();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const fetchGoals = async () => {
+    try {
+      const token = await getToken("access_token");
+      const goals = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/goal`, {
+        headers: {
+          Authorization: `Bearer ${token?.value}`,
+        },
+      });
+      // console.log(goals);
+      setGoals(goals.data);
+    } catch (error) {
+      // console.log(error);
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        deleteToken("access_token");
+        window.location.href = "/login";
+        toast.error("Please login again");
+      }
+    }
+    // setGoals()
+  };
 
   const onChangeNote = (id: string, note: string) => {
     setGoals((prevGoals) =>

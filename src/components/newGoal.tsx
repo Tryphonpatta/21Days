@@ -6,6 +6,9 @@ import { Button } from "./ui/button";
 import { TiTick } from "react-icons/ti";
 import { X } from "lucide-react";
 import { Goal } from "./ui/goalcard";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { getToken } from "../../utils/getAccesstoken";
 const colors = [
   "#ADF7B6",
   "#A817C0",
@@ -37,6 +40,38 @@ export default function NewGoal({
   const [tag, setTag] = useState<string[]>(["test", "test2"]);
   const [isAddMore, setIsAddMore] = useState(false);
   const [addingTag, setAddingTag] = useState("");
+
+  const handleAddGoal = async () => {
+    const token = await getToken("access_token");
+    if (!token) {
+      toast.error("Please login again");
+      return;
+    }
+
+    if (goalName.trim() === "") {
+      toast.error("Please enter a goal name");
+      return;
+    }
+    const newGoal = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/goal`,
+      {
+        name: goalName,
+        color: goalColor,
+        note: goalNote,
+        tags: goalTag,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token?.value}`,
+        },
+      }
+    );
+    console.log(newGoal);
+    if (newGoal.status !== 200 && newGoal.status !== 201) {
+      toast.error("Failed to add goal");
+      return;
+    }
+  };
 
   return (
     <div className="flex flex-col w-full h-screen items-center">
@@ -124,6 +159,7 @@ export default function NewGoal({
         size="icon"
         className="fixed bottom-5 right-5 z-50 shadow-lg hover:scale-125 duration-200 cursor-pointer"
         onClick={() => {
+          handleAddGoal();
           setGoals((prev: Goal[]) => [
             ...prev,
             {
