@@ -50,5 +50,6 @@ jobs:
             if [ -n "$OLD_IMAGE_ID" ]; then
               sudo docker rmi $OLD_IMAGE_ID || true
             fi
-            sudo docker run -d --name 21days -p 3002:3000 patthadon/21days
+            ENV_VARS="-e NODE_ENV=production -e NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }} -e JWT_SECRET=${{ secrets.JWT_SECRET }}"
+            sudo docker run -d --name 21days -p 3002:3000 patthadon/21days $ENV_VARS
             sudo docker network connect nginx-proxy_default 21days
