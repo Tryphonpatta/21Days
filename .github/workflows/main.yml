@@ -19,7 +19,11 @@ jobs:
       # Step 2: (Optional) Build Docker image if applicable
       - name: Build Docker image
         run: |
-          docker build --platform linux/amd64 -t 21days:latest .
+          docker build \
+          --platform linux/amd64 \
+          --build-arg NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }} \
+          --build-arg JWT_SECRET=${{ secrets.JWT_SECRET }} \
+          -t patthadon/21days .
 
       # Step 3: Log in to Docker Hub (Optional)
       - name: Log in to Docker Hub
@@ -50,6 +54,5 @@ jobs:
             if [ -n "$OLD_IMAGE_ID" ]; then
               sudo docker rmi $OLD_IMAGE_ID || true
             fi
-            ENV_VARS="-e NODE_ENV=production -e NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }} -e JWT_SECRET=${{ secrets.JWT_SECRET }}"
-            sudo docker run -p 3002:3000 $ENV_VARS -d --name 21days patthadon/21days 
+            sudo docker run -p 3002:3000 -d --name 21days patthadon/21days 
             sudo docker network connect nginx-proxy_default 21days
