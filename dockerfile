@@ -46,6 +46,13 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
 
+ARG NEXT_PUBLIC_API_URL
+ARG JWT_SECRET
+
+
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV JWT_SECRET=$JWT_SECRET
+
 EXPOSE 3000
 
 ENV PORT=3000
