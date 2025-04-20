@@ -19,7 +19,7 @@ jobs:
       # Step 2: (Optional) Build Docker image if applicable
       - name: Build Docker image
         run: |
-          docker build --platform linux/amd64 -t 21days-api:latest .
+          docker build --platform linux/amd64 -t 21days:latest .
 
       # Step 3: Log in to Docker Hub (Optional)
       - name: Log in to Docker Hub
@@ -31,8 +31,8 @@ jobs:
       # Step 4: Push Docker image to Docker Hub (Optional)
       - name: Push Docker image to Docker Hub
         run: |
-          docker tag 21days-api patthadon/21days-api
-          docker push patthadon/21days-api:latest
+          docker tag 21days patthadon/21days
+          docker push patthadon/21days:latest
 
       # Step 5: Execute SSH commands remotely on EC2
       - name: Deploy to EC2 via SSH
