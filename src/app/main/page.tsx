@@ -12,10 +12,8 @@ import { toast } from "react-toastify";
 export default function MainPage() {
   const [isNew, setIsNew] = useState(false);
   const [goals, setGoals] = useState<Goal[]>([]);
-  const [goalRes, setGoalRes] = useState([]);
   useEffect(() => {
     fetchGoals();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchGoals = async () => {
