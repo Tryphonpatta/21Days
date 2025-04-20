@@ -46,9 +46,9 @@ jobs:
             sudo docker stop 21days || true
             sudo docker rm 21days || true
             echo "Removing old image..."
-            OLD_IMAGE_ID=$(docker images patthadon/21days -q | tail -n +2)
+            OLD_IMAGE_ID=$(sudo docker images patthadon/21days -q | tail -n +2)
             if [ -n "$OLD_IMAGE_ID" ]; then
-              docker rmi $OLD_IMAGE_ID || true
+              sudo docker rmi $OLD_IMAGE_ID || true
             fi
             sudo docker run -d --name 21days -p 3002:3000 patthadon/21days
             sudo docker network connect nginx-proxy_default 21days
