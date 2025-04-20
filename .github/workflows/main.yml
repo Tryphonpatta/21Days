@@ -23,7 +23,7 @@ jobs:
           --platform linux/amd64 \
           --build-arg NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }} \
           --build-arg JWT_SECRET=${{ secrets.JWT_SECRET }} \
-          -t patthadon/21days .
+          -t 21days .
 
       # Step 3: Log in to Docker Hub (Optional)
       - name: Log in to Docker Hub
