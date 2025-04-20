@@ -43,6 +43,14 @@ export default function MainPage() {
     );
   };
 
+  const onChangeComplete = (id: string, status: boolean) => {
+    setGoals((prevGoals) =>
+      prevGoals.map((goal) =>
+        goal.id === id ? { ...goal, status: status } : goal
+      )
+    );
+  };
+
   return (
     <div className="w-full  px-5">
       {!isNew ? (
@@ -51,7 +59,12 @@ export default function MainPage() {
           <div className="mt-5 flex flex-col items-center w-full gap-2">
             {goals.map((goal) => (
               <div key={goal.id} className="w-[95%]">
-                <GoalCard goal={goal} onChangeNote={onChangeNote}></GoalCard>
+                <GoalCard
+                  goal={goal}
+                  onChangeNote={onChangeNote}
+                  onChangeComplete={onChangeComplete}
+                  setGoals={setGoals}
+                ></GoalCard>
               </div>
             ))}
           </div>

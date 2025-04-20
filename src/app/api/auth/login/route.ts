@@ -2,9 +2,7 @@ import axios from "axios";
 
 export async function POST(request: Request) {
   // Check if the request is a POST request
-  console.log("Request method:", request.method);
   const req = await request.json();
-  console.log("Request body:", req);
   const res = await axios.post(
     `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
     {
