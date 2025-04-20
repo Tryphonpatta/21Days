@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 // import { Geist, Geist_Mono } from "next/font/google";
 import { Poppins } from "next/font/google";
+import { ToastContainer } from "react-toastify";
+
 import "./globals.css";
 
 // const geistSans = Geist({
@@ -33,6 +35,25 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${poppins.className}  antialiased w-full h-full`}>
         {children}
+        <ToastContainer
+          position="bottom-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+          limit={3}
+          style={{
+            width: "auto",
+            maxWidth: "100%",
+            margin: "0px",
+            padding: "0px",
+          }}
+        />
       </body>
     </html>
   );
