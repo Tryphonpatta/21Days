@@ -29,7 +29,7 @@ export default function LoginPage() {
       }
     );
     if (res.status !== 200) {
-      toast.error("Sign up failed");
+      toast.error("Sign up failed!");
       return;
     }
     toast.success("Sign up successful");
