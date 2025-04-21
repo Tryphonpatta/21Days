@@ -5,8 +5,11 @@ import { Calendar } from "@/components/ui/calendar";
 export default function Sidebar() {
   return (
     <div className="flex flex-col w-80 h-screen items-center border gap-2">
-      <div className="flex justify-center items-center gap-2 mt-4">
-        <Image src={"logo.svg"} alt="logo" width={60} height={60}></Image>
+      <div
+        className="flex justify-center items-center gap-2 mt-4 hover:scale-105 duration-200 cursor-pointer"
+        onClick={() => (window.location.href = "/main")}
+      >
+        <Image src={"/logo.svg"} alt="logo" width={60} height={60}></Image>
         <div className="text-3xl font-bold">21 Days</div>
       </div>
       <div className="my-3">

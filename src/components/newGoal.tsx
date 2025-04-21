@@ -1,15 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UnderlineInput from "./ui/underlineInput";
 import { Button } from "./ui/button";
 import { TiTick } from "react-icons/ti";
 import { X } from "lucide-react";
-import { Goal } from "./ui/goalcard";
+import { Goal, Tag } from "./ui/goalcard";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { getToken } from "../../utils/getAccesstoken";
-const colors = [
+import "ldrs/react/Infinity.css";
+import { Infinity } from "ldrs/react";
+export const colors = [
   "#ADF7B6",
   "#A817C0",
   "#FFC09F",
@@ -36,11 +38,75 @@ export default function NewGoal({
   const [goalName, setGoalName] = useState("");
   const [goalNote, setGoalNote] = useState("");
   const [goalColor, setGoalColor] = useState("#FFC09F");
-  const [goalTag, setGoalTag] = useState("");
-  const [tag, setTag] = useState<string[]>(["test", "test2"]);
+  const [goalTag, setGoalTag] = useState<Tag | null>();
+  const [tag, setTag] = useState<Tag[]>([]);
   const [isAddMore, setIsAddMore] = useState(false);
   const [addingTag, setAddingTag] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
+  const fetchTags = async () => {
+    setIsLoading(true);
+    const token = await getToken("access_token");
+    if (!token) {
+      toast.error("Please login again");
+      return;
+    }
+    const tags = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/user/tags`,
+      {
+        headers: {
+          Authorization: `Bearer ${token?.value}`,
+        },
+      }
+    );
+    if (tags.status !== 200 && tags.status !== 201) {
+      toast.error("Failed to fetch tags");
+      return;
+    }
+    setTag(tags.data);
+    setIsLoading(false);
+  };
+  useEffect(() => {
+    fetchTags();
+  }, []);
+  const onSubmitTag = async () => {
+    setIsLoading(true);
+    if (addingTag.trim() != "") {
+      const token = await getToken("access_token");
+      if (!token) {
+        toast.error("Please login again");
+        return;
+      }
+      const newTag = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/tag`,
+        {
+          name: addingTag,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token?.value}`,
+          },
+        }
+      );
+      if (newTag.status !== 200 && newTag.status !== 201) {
+        toast.error("Failed to add tag");
+        return;
+      }
+      const responseTag = {
+        id: newTag.data.id,
+        name: newTag.data.name,
+      } as Tag;
+      setAddingTag("");
+      setIsAddMore(false);
+      setTag((prev) => {
+        const newTags = [...prev, responseTag];
+        return newTags;
+      });
+    }
+    setAddingTag("");
+    setIsAddMore(false);
+    setIsLoading(false);
+  };
   const handleAddGoal = async () => {
     const token = await getToken("access_token");
     if (!token) {
@@ -58,7 +124,7 @@ export default function NewGoal({
         name: goalName,
         color: goalColor,
         note: goalNote,
-        tags: goalTag,
+        tag: goalTag?.id ? goalTag.id : null,
       },
       {
         headers: {
@@ -71,6 +137,16 @@ export default function NewGoal({
       toast.error("Failed to add goal");
       return;
     }
+    const responseGoal = {
+      id: newGoal.data.id,
+      name: newGoal.data.name,
+      streak: 0,
+      color: newGoal.data.color,
+      description: newGoal.data.note,
+      tag: goalTag?.id ? goalTag : null,
+    } as Goal;
+    setGoals((prev: Goal[]) => [...prev, responseGoal]);
+    setIsNew(false);
   };
 
   return (
@@ -93,21 +169,21 @@ export default function NewGoal({
         </div>
         <div className="h-25 bg-[#F8F9FA] w-full py-4  rounded-xl flex-col items-center justify-between px-4">
           <UnderlineInput
-            value={goalTag}
+            value={goalTag?.name ? goalTag.name : ""}
             placeholder="Set a tag for your task"
             onChange={(e) => setGoalColor(e.target.value)}
             disabled={true}
           ></UnderlineInput>
           <div className="flex gap-4 mx-2 mt-3">
             {tag.map((t) => (
-              <div key={t}>
+              <div key={t.id}>
                 <div
                   className="h-9 bg-[#F8F9FA] border rounded-3xl p-3 flex items-center justify-between hover:scale-110 duration-200 cursor-pointer"
                   onClick={() => {
                     setGoalTag(t);
                   }}
                 >
-                  {t}
+                  {t.name}
                 </div>
               </div>
             ))}
@@ -127,10 +203,7 @@ export default function NewGoal({
                   }}
                   placeholder="Add a tag"
                   onSubmit={() => {
-                    if (addingTag.trim() != "")
-                      setTag((prev) => [...prev, addingTag]);
-                    setAddingTag("");
-                    setIsAddMore(false);
+                    onSubmitTag();
                   }}
                 ></UnderlineInput>
               </div>
@@ -160,21 +233,11 @@ export default function NewGoal({
         className="fixed bottom-5 right-5 z-50 shadow-lg hover:scale-125 duration-200 cursor-pointer"
         onClick={() => {
           handleAddGoal();
-          setGoals((prev: Goal[]) => [
-            ...prev,
-            {
-              id: Math.random().toString(),
-              name: goalName,
-              streak: 0,
-              color: goalColor,
-              note: goalNote,
-            } as Goal,
-          ]);
           setIsNew(false);
           setGoalName("");
           setGoalNote("");
           setGoalColor("#FFC09F");
-          setGoalTag("");
+          setGoalTag(null);
           setAddingTag("");
         }}
       >
@@ -190,6 +253,18 @@ export default function NewGoal({
       >
         <X />
       </Button>
+      {isLoading && (
+        <div className="fixed inset-0 flex justify-center items-center h-screen backdrop-blur-sm bg-white/30 z-50">
+          <Infinity
+            size="55"
+            stroke="4"
+            strokeLength="0.15"
+            bgOpacity="0.1"
+            speed="1.3"
+            color="black"
+          />
+        </div>
+      )}
     </div>
   );
 }

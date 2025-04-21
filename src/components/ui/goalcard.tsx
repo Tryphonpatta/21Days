@@ -12,8 +12,16 @@ export interface Goal {
   name: string;
   streak: number;
   color: string;
-  note?: string;
+  description?: string;
   status: boolean;
+  tag?: Tag;
+  bestStreak?: number;
+  note?: string;
+}
+
+export interface Tag {
+  id?: string;
+  name: string;
 }
 
 export default function GoalCard({
@@ -63,17 +71,48 @@ export default function GoalCard({
       }
     }
   };
+  const handleChangeNote = async (e: string) => {
+    console.log(e);
+    try {
+      const token = await getToken("access_token");
+      const updatedGoal = await axios.put(
+        `${process.env.NEXT_PUBLIC_API_URL}/goal/${goal.id}`,
+        {
+          note: e,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token?.value}`,
+          },
+        }
+      );
+      if (onChangeNote) {
+        onChangeNote(goal.id || "", e as string);
+      }
+      toast.success("Note updated");
+      return updatedGoal;
+    } catch (error) {
+      console.log(error);
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        deleteToken("access_token");
+        window.location.href = "/login";
+        toast.error("Please login again");
+      }
+    }
+  };
   return (
     <div
-      className="w-full min-h-24 border rounded-xl flex items-center  justify-between"
+      className="w-full min-h-24 border rounded-xl flex items-center  justify-between cursor-pointer hover:shadow-lg duration-200"
       style={{ backgroundColor: `${goal.color}80` }} // 80 = ~50% opacity in hex
+      onClick={() => (window.location.href = `/main/goal/${goal.id}`)}
     >
-      <div className="flex flex-col  pt-2 gap-2 h-full w-full   text-lg">
+      <div className="flex flex-col  pt-2 gap-2 h-full w-full text-lg">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center  gap-4">
             <Checkbox
               checked={goal.status}
               onCheckedChange={(e) => handleCheckboxChange(e)}
+              onClick={(e) => e.stopPropagation()}
               className="w-6 h-6 ml-3 bg-white"
             />
             <p>{goal.name}</p>
@@ -101,7 +140,10 @@ export default function GoalCard({
             )}
           </div>
         </div>
-        <div className="pl-14 w-full pr-14 pb-2">
+        <div
+          className="pl-14 w-full pr-14 pb-2"
+          onClick={(e) => e.stopPropagation()}
+        >
           <UnderlineInput
             value={goal.note || ""}
             placeholder="note"
@@ -110,6 +152,9 @@ export default function GoalCard({
               if (onChangeNote) {
                 onChangeNote(goal.id || "", e.target.value);
               }
+            }}
+            onSubmit={() => {
+              handleChangeNote(goal.note || "");
             }}
           />
         </div>
