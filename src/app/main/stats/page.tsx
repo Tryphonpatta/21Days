@@ -19,8 +19,8 @@ export type Stats = {
     color: string;
     goalLog: GoalLog[];
   }[];
-  streak: number;
-  bestStreak: number;
+  streaks: number;
+  bestStreaks: number;
   completed: number;
 };
 
@@ -38,7 +38,6 @@ export default function StatsPage() {
       const found = logsInLocalTime.some((logDate) => isSameDay(logDate, date));
       heatmap[i] = found;
     }
-    console.log(heatmap);
     return (
       <div className="flex gap-1">
         {heatmap.map((filled, index) => (
@@ -89,6 +88,7 @@ export default function StatsPage() {
     title: string;
     value: string;
   }) => {
+    console.log(title, value);
     return (
       <div className="w-64 h-50 rounded-4xl border-[#25282C]/30 border shadow-md">
         <div className="flex-col mt-6 mx-4 gap-4">
@@ -111,10 +111,28 @@ export default function StatsPage() {
         <div className="text-3xl font-bold">Statistics</div>
       </div>
       <div className="flex w-full justify-evenly px-10">
-        <Card imgUrl="/streak.png" title="Current Streak" value="130"></Card>
-        <Card imgUrl="/best_streak.png" title="Best Streak" value="192"></Card>
-        <Card imgUrl="/complete.png" title="Completion Rate" value="75%"></Card>
-        <Card imgUrl="/habit.png" title="Habits Completed" value="3"></Card>
+        <Card
+          imgUrl="/streak.png"
+          title="Current Streak"
+          value={stats?.streaks ? stats?.streaks.toString() : "0"}
+        ></Card>
+        <Card
+          imgUrl="/best_streak.png"
+          title="Best Streak"
+          value={stats?.bestStreaks ? stats?.bestStreaks.toString() : "0"}
+        ></Card>
+        <Card
+          imgUrl="/complete.png"
+          title="Completion Rate"
+          value={
+            stats ? (stats.completed / stats.goals.length).toString() : "0"
+          }
+        ></Card>
+        <Card
+          imgUrl="/habit.png"
+          title="Habits Completed"
+          value={stats?.completed ? stats?.completed.toString() : "0"}
+        ></Card>
       </div>
       <div className="mt-4 mx-3 w-254 h-fit py-8 border rounded-3xl">
         <p className="px-5 text-3xl mx-3 mb-5">Streak</p>
