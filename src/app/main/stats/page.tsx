@@ -90,7 +90,7 @@ export default function StatsPage() {
     value: string;
   }) => {
     return (
-      <div className="w-80 h-50 rounded-4xl border-[#25282C]/30 border shadow-md">
+      <div className="w-64 h-50 rounded-4xl border-[#25282C]/30 border shadow-md">
         <div className="flex-col mt-6 mx-4 gap-4">
           <div className="flex justify-center items-center w-12 h-12 rounded-full bg-[#FFF2E5]">
             <Image src={imgUrl} alt="streak" width={40} height={40}></Image>
