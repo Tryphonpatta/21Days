@@ -14,7 +14,7 @@ export interface Goal {
   color: string;
   description?: string;
   status: boolean;
-  tag?: Tag;
+  tag?: Tag | null;
   bestStreak?: number;
   note?: string;
 }

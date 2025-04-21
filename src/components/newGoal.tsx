@@ -8,9 +8,10 @@ import { X } from "lucide-react";
 import { Goal, Tag } from "./ui/goalcard";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { getToken } from "../../utils/getAccesstoken";
+import { deleteToken, getToken } from "../../utils/getAccesstoken";
 import "ldrs/react/Infinity.css";
 import { Infinity } from "ldrs/react";
+import { useRouter } from "next/navigation";
 export const colors = [
   "#ADF7B6",
   "#A817C0",
@@ -35,6 +36,7 @@ export default function NewGoal({
   setIsNew: (isNew: boolean) => void;
   setGoals: React.Dispatch<React.SetStateAction<Goal[]>>;
 }) {
+  const router = useRouter();
   const [goalName, setGoalName] = useState("");
   const [goalNote, setGoalNote] = useState("");
   const [goalColor, setGoalColor] = useState("#FFC09F");
@@ -106,6 +108,41 @@ export default function NewGoal({
     setAddingTag("");
     setIsAddMore(false);
     setIsLoading(false);
+    router.refresh();
+  };
+  const handleDeleteTag = async (id: string) => {
+    try {
+      setIsLoading(true);
+      const token = await getToken("access_token");
+      if (!token) {
+        toast.error("Please login again");
+        return;
+      }
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/tag/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token?.value}`,
+        },
+      });
+      setIsLoading(false);
+      setTag((prev) => {
+        const newTags = prev.filter((t) => t.id !== id);
+        return newTags;
+      });
+      if (goalTag?.id === id) {
+        setGoalTag(null);
+      }
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error);
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        deleteToken("access_token");
+        window.location.href = "/login";
+        toast.error("Please login again");
+      }
+      if (axios.isAxiosError(error)) {
+        toast.error(error.message);
+      }
+    }
   };
   const handleAddGoal = async () => {
     const token = await getToken("access_token");
@@ -176,26 +213,35 @@ export default function NewGoal({
           ></UnderlineInput>
           <div className="flex gap-4 mx-2 mt-3">
             {tag.map((t) => (
-              <div key={t.id}>
+              <div key={t.id} className="relative mt-1">
                 <div
-                  className="h-9 bg-[#F8F9FA] border rounded-3xl p-3 flex items-center justify-between hover:scale-110 duration-200 cursor-pointer"
+                  className="h-9 bg-[#F8F9FA] border rounded-3xl p-3 flex items-center justify-between hover:bg-accent duration-200 cursor-pointer"
                   onClick={() => {
                     setGoalTag(t);
                   }}
                 >
-                  {t.name}
+                  <p>{t.name}</p>
                 </div>
+                <button
+                  className="absolute top-0 right-0 mt-[-6px] mr-[-6px] bg-red-400 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-500 cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent triggering the parent div's onClick
+                    handleDeleteTag(t.id as string);
+                  }}
+                >
+                  <X />
+                </button>
               </div>
             ))}
             {!isAddMore ? (
               <div
-                className="h-9 bg-[#F8F9FA] border rounded-3xl p-3 flex items-center justify-between hover:scale-110 duration-200 cursor-pointer"
+                className="h-9 bg-[#F8F9FA] border rounded-3xl p-3 flex mt-1 items-center justify-between hover:scale-110 duration-200 cursor-pointer"
                 onClick={() => setIsAddMore(!isAddMore)}
               >
                 Add more +
               </div>
             ) : (
-              <div className="h-9 bg-[#F8F9FA] border rounded-3xl p-3 flex items-center justify-between hover:scale-110 duration-200 cursor-pointer">
+              <div className="h-9 bg-[#F8F9FA] border rounded-3xl p-3 mt-1 flex items-center justify-between cursor-pointer">
                 <UnderlineInput
                   value={addingTag}
                   onChange={(e) => {

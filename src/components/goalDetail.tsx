@@ -12,12 +12,48 @@ import UnderlineInput from "./ui/underlineInput";
 import { TiTick } from "react-icons/ti";
 import { toast } from "react-toastify";
 import { colors } from "./newGoal";
+import { X } from "lucide-react";
 
 export default function GoalPage({ id }: { id: string }) {
   const [goal, setGoal] = useState<Goal | null>();
   const [tags, setTags] = useState<Tag[]>([]);
   const [loading, setLoading] = useState(true);
   const [isEdit, setIsEdit] = useState(false);
+
+  const handleDeleteTag = async (tagId: string) => {
+    try {
+      setLoading(true);
+      const token = await getToken("access_token");
+      if (!token) {
+        toast.error("Please login again");
+        return;
+      }
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/tag/${tagId}`, {
+        headers: {
+          Authorization: `Bearer ${token?.value}`,
+        },
+      });
+      setTags((prev) => prev.filter((tag) => tag.id !== tagId));
+      if (goal?.tag && goal.tag.id === tagId) {
+        setGoal((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            tag: null,
+          };
+        });
+      }
+      setLoading(false);
+      toast.success("Tag deleted successfully");
+    } catch (error) {
+      setLoading(false);
+      if (isAxiosError(error) && error.response?.status == 401) {
+        toast.error("Please login again");
+        window.location.href = "/login";
+        return;
+      }
+    }
+  };
 
   const fetchGoalAndTag = async () => {
     setLoading(true);
@@ -111,7 +147,6 @@ export default function GoalPage({ id }: { id: string }) {
           },
         }
       );
-      console.log("updatedGoal", updatedGoal.data);
       setGoal(updatedGoal.data);
       setIsEdit(false);
       setLoading(false);
@@ -208,7 +243,7 @@ export default function GoalPage({ id }: { id: string }) {
             {tags.map((tag) => (
               <div
                 key={tag.id}
-                className="text-lg h-15 w-fit  border-2  bg-[#F8F9FA] flex items-center mx-2 mt-2 rounded-lg border-[#1E1C1C]/40 cursor-pointer hover:scale-105 duration-200"
+                className="text-lg h-15 w-fit  border-2  bg-[#F8F9FA] flex items-center mx-2 mt-2 rounded-lg border-[#1E1C1C]/40 cursor-pointer hover:scale-105 duration-200 relative"
                 onClick={() => {
                   setGoal((prev) => {
                     if (!prev) return prev;
@@ -220,6 +255,15 @@ export default function GoalPage({ id }: { id: string }) {
                 }}
               >
                 <p className="mx-3">{tag.name}</p>
+                <button
+                  className="absolute top-0 right-0 mt-[-6px] mr-[-6px] bg-red-400 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-500 cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent triggering the parent div's onClick
+                    handleDeleteTag(tag.id as string);
+                  }}
+                >
+                  <X />
+                </button>
               </div>
             ))}
           </div>
