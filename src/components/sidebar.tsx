@@ -8,11 +8,25 @@ import axios from "axios";
 import { Infinity } from "ldrs/react";
 import "ldrs/react/Infinity.css";
 
-type TagCount = Tag & { count: number };
+type TagCount = Tag & { count: number; goalCount: number };
 
 export default function Sidebar() {
   const [tags, setTags] = useState<TagCount[]>([]);
+  const [goalCount, setGoalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const fetchGoalCount = async () => {
+    try {
+      const token = await getToken("access_token");
+      const goal = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/goal`, {
+        headers: {
+          Authorization: `Bearer ${token?.value}`,
+        },
+      });
+      setGoalCount(goal.data.length);
+    } catch (error) {
+      console.error("Error fetching goal count:", error);
+    }
+  };
   const fetchTags = async () => {
     try {
       setIsLoading(true);
@@ -37,6 +51,7 @@ export default function Sidebar() {
   };
   useEffect(() => {
     fetchTags();
+    fetchGoalCount();
   }, []);
 
   return (
@@ -63,7 +78,7 @@ export default function Sidebar() {
             onClick={() => (window.location.href = "/main")}
           >
             <p className="px-5">All</p>
-            <p className="px-5">4</p>
+            <p className="px-5">{goalCount}</p>
           </div>
           {/* <div className="flex justify-between h-15 items-center hover:bg-gray-100 cursor-pointer w-full duration-200">
             <p className="px-5">Daily Routine</p>
