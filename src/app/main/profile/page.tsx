@@ -132,7 +132,7 @@ export default function ProfilePage() {
         ></SelectionCard>
         <SelectionCard
           topic={"Badges"}
-          href="/badge"
+          href="/main/badge"
           Logo={BadgeCheck}
         ></SelectionCard>
         <SelectionCard
