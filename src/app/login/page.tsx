@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import PasswordInput from "@/components/ui/password";
 import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -75,15 +76,11 @@ export default function LoginPage() {
                 className="w-full h-full"
               />
             </div>
-            <div className="w-106 h-16 rounded-2xl mt-1 text-[15px]">
-              <Input
-                type="text"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
-                className="w-full h-full"
-              />
-            </div>
+            <PasswordInput
+              value={password}
+              setValue={setPassword}
+              placeholder="Password"
+            ></PasswordInput>
             <a href="/register">
               <p className="mt-10 text-[12px] underline cursor-pointer hover:text-gray-400 duration-200">
                 {` don't have an account yet ? sign up now`}
