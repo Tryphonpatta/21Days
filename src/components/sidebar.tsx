@@ -78,7 +78,7 @@ export default function Sidebar() {
             onClick={() => (window.location.href = "/main")}
           >
             <p className="px-5">All</p>
-            <p className="px-5">{goalCount}</p>
+            <p className="px-5">{goalCount ? goalCount : 0}</p>
           </div>
           {/* <div className="flex justify-between h-15 items-center hover:bg-gray-100 cursor-pointer w-full duration-200">
             <p className="px-5">Daily Routine</p>
