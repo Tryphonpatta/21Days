@@ -175,7 +175,7 @@ export default function GoalPage({ id }: { id: string }) {
                 onClick={() => {
                   handleDelete();
                 }}
-                className="cursor-pointer"
+                className="cursor-pointer bg-red-400 hover:bg-red-600 "
               >
                 delete
               </Button>
@@ -341,8 +341,8 @@ export default function GoalPage({ id }: { id: string }) {
       {isEdit && (
         <Button
           variant="outline"
-          size="icon"
-          className="fixed bottom-5 right-5 z-50 shadow-lg hover:scale-125 duration-200 cursor-pointer"
+          size="lg"
+          className="fixed bottom-5 right-5 z-50 shadow-lg hover:scale-125 duration-200 cursor-pointer bg-black text-white"
           onClick={() => {
             handleUpdate();
           }}
