@@ -6,6 +6,10 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Allow public paths
+  console.log("pathname", pathname);
+  if (pathname === "/") {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
   if (PUBLIC_PATHS.includes(pathname)) {
     return NextResponse.next();
   }
@@ -16,5 +20,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/main/:path*"],
+  matcher: ["/main/:path*", "/"],
 };
