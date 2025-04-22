@@ -1,4 +1,5 @@
 import { RiNotification3Fill } from "react-icons/ri";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 export default function Header() {
   return (
@@ -10,6 +11,12 @@ export default function Header() {
         <a href="/main/leaderboard">Leaderboard</a>
       </div>
       <RiNotification3Fill size={24} />
+      <a href="/main/profile">
+        <Avatar>
+          <AvatarImage src="/profile.png" alt="@shadcn" />
+          <AvatarFallback>CN</AvatarFallback>
+        </Avatar>
+      </a>
     </div>
   );
 }
