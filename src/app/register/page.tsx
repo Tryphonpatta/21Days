@@ -71,7 +71,7 @@ export default function LoginPage() {
         <div className="flex justify-center w-full pt-25 h-full ">
           <div className="w-207 h-162 border rounded-[3.5rem] flex flex-col py-20 items-center gap-5 shadow-xl bg-white/80">
             <div className="font-bold text-[22px] text-[#C67ED2]">
-              Log in to HabitGoal
+              Sign up to HabitGoal
             </div>
             <div>Welcome back! Sign up to continue us</div>
             <div className="w-106 h-16 rounded-2xl mt-10 text-[15px]">
