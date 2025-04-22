@@ -97,9 +97,11 @@ export default function LoginPage() {
               setValue={setPassword}
               placeholder="Password"
             ></PasswordInput>
-            <p className="mt-10 text-[12px] underline cursor-pointer hover:text-gray-400 duration-200">
-              {` don't have an account yet ? sign up now`}
-            </p>
+            <a href="/login">
+              <p className="mt-10 text-[12px] underline cursor-pointer hover:text-gray-400 duration-200">
+                {`already have an account ? log in now`}
+              </p>
+            </a>
             <div>
               <Button
                 className="mt-2 w-58 h-16 rounded-2xl text-[25px] bg-white text-black shadow-xl hover:bg-gray-200 duration-500 cursor-pointer"
