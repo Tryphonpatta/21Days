@@ -66,14 +66,11 @@ export default function Badge() {
   const fetchBadges = async () => {
     setIsLoading(true);
     const token = await getToken("access_token");
-    const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/user/badge`,
-      {
-        headers: {
-          Authorization: `Bearer ${token?.value}`,
-        },
-      }
-    );
+    const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/badges`, {
+      headers: {
+        Authorization: `Bearer ${token?.value}`,
+      },
+    });
     setBadge(res.data);
     setIsLoading(false);
   };

@@ -40,7 +40,7 @@ export default function LeaderboardPage() {
       const token = await getToken("access_token");
       setIsLoading(true);
       const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/user/leaderboard`,
+        `${process.env.NEXT_PUBLIC_API_URL}/leaderboard`,
         {
           headers: {
             Authorization: `Bearer ${token?.value}`,
